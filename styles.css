@@ -1,0 +1,36 @@
+#board {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+.black {
+    width: 15px;
+    height: 15px;
+    padding: -5px;
+    background-color: black;
+    border: none;
+}
+
+.green {
+    width: 15px;
+    height: 15px;
+    padding: -5px;
+    background-color: green;
+    border: none;
+}
+
+.head {
+    width: 15px;
+    height: 15px;
+    padding: -5px;
+    background-color: #3EDE5B;
+    border: none;
+}
+
+.red {
+    width: 15px;
+    height: 15px;
+    padding: -5px;
+    background-color: red;
+    border: none;
+}
