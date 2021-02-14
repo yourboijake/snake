@@ -1,5 +1,18 @@
 const GRID_SIZE = 30;
 
+//test if arr1 equals arr 2
+function arrEquals(arr1, arr2) {
+    if (arr1.length != arr2.length) {
+        return false;
+    }
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] != arr2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 //initialize back end grid
 var grid = [];
 for (let i = 0; i < GRID_SIZE; i++) {
@@ -37,18 +50,16 @@ grid[9][8] = 1;
 grid[9][7] = 1;
 
 //spawn new food
+var foodCoordinates = [9, 22];
 function newFood() {
-    var coordinates = [];
-    coordinates.push(Math.floor(Math.random() * (GRID_SIZE)));
-    while (coordinates[0] < GRID_SIZE/2 + 1 && coordinates[0] > GRID_SIZE/2 - 1) {
-        coordinates[0] = Math.floor(Math.random() * (GRID_SIZE));
-    }
-    coordinates.push(Math.floor(Math.random() * (GRID_SIZE)));
-    while (coordinates[1] < GRID_SIZE/2 + 1 && coordinates[1] > GRID_SIZE/2 - 1) {
-        coordinates[1] = Math.floor(Math.random() * (GRID_SIZE));
+    foodCoordinates[0] = (Math.floor(Math.random() * (GRID_SIZE)));
+    foodCoordinates[1] = (Math.floor(Math.random() * (GRID_SIZE)));
+    while (grid[foodCoordinates[0]][foodCoordinates[1]] != 0) {
+        foodCoordinates[0] = Math.floor(Math.random() * (GRID_SIZE));
+        foodCoordinates[1] = (Math.floor(Math.random() * (GRID_SIZE)));
     }
     //ensure food doesn't spawn in the center
-    return coordinates;
+    return foodCoordinates;
 }
 
 function updateHTML() {
@@ -70,9 +81,7 @@ function updateHTML() {
     }
 }
 
-
 function moveBoard() {
-    
     //initialize new board
     let newGrid = [];
     for (let i = 0; i < GRID_SIZE; i++) {
@@ -92,7 +101,6 @@ function moveBoard() {
     snake = newSnake;
 
     //put values into newGrid
-
     for (let i = 0; i < newSnake.length; i++) {
         if (i == 0) { //make new head
             let y = newSnake[i][0];
@@ -111,12 +119,13 @@ function moveBoard() {
         }
     }
 
+    newGrid[foodCoordinates[0]][foodCoordinates[1]] = 4;
     //assign newGrid to grid
     grid = newGrid;
     updateHTML();
 }
 
-function checkSnakeOverlap() {
+function checkSnakeOverlap() { //check if snake is running over its tail
     let headX = snake[0][1];
     let headY = snake[0][0];
     for (let i = 1; i < snake.length; i++) {
@@ -131,13 +140,18 @@ var x; //declare variable to store setInterval
 function runGame() {
     if (snake[0][0] == GRID_SIZE || snake[0][0] < 0 || snake[0][1] < 0 || snake[0][1] == GRID_SIZE) {
         clearInterval(x); //cancel if the snake is out of bounds
-        console.log('game over: out of bounds');
+        document.getElementById('results').innerHTML = 'game over: out of bounds, snake length = ' + snake.length;
     }
     else if (checkSnakeOverlap()) { //cancel if the snake runs over its tail
         clearInterval(x);
-        console.log('you hit your tail');
+        document.getElementById('results').innerHTML = 'game over: you ran over your tail, snake length = ' + snake.length;
     }
     else {
+        if (arrEquals(snake[0], foodCoordinates)) {
+            let tail = snake[snake.length - 1];
+            snake.push([tail[0] - del_y, tail[1] - del_x]);
+            newFood();
+        }
         moveBoard();
     }
 }
